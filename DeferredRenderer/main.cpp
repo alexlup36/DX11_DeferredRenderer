@@ -1,4 +1,25 @@
-#include <windows.h>
+#include <memory>
+
+// ----------------------------------------------------------------------------
+// Includes -------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+#include "D3DApp.h"
+
+//#include "CommonStates.h"
+//#include "DDSTextureLoader.h"
+//#include "DirectXHelpers.h"
+//#include "Effects.h"
+//#include "GamePad.h"
+//#include "GeometricPrimitive.h"
+//#include "Model.h"
+//#include "PrimitiveBatch.h"
+//#include "ScreenGrab.h"
+//#include "SpriteBatch.h"
+//#include "SpriteFont.h"
+//#include "VertexTypes.h"
+//#include "WICTextureLoader.h"
+
 
 // ----------------------------------------------------------------------------
 // Global variables -----------------------------------------------------------
@@ -7,8 +28,15 @@
 LPCTSTR WndClassName = "Win32Window";
 HWND hwnd = NULL;
 
-const int Width = 800;
-const int Height = 600;
+const int Width = 1366;
+const int Height = 768;
+
+const int FullScreenWidth = 1920;
+const int FullScreenHeight = 1080;
+
+const bool bFullScreen = true;
+
+std::shared_ptr<D3DApp> d3dapp = std::make_shared<D3DApp>();
 
 // ----------------------------------------------------------------------------
 // Function prototypes --------------------------------------------------------
@@ -39,14 +67,51 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	LPSTR lpCmdLine,
 	int nShowCmd)
 {
-	// If failed to initialize the window
-	if (InitializeWindow(hInstance, nShowCmd, Width, Height, true) == false)
+	if (bFullScreen)
 	{
-		MessageBox(0, "Window initialization failed", "Error", MB_OK);
+		// If failed to initialize the window
+		if (InitializeWindow(hInstance, nShowCmd, FullScreenWidth, FullScreenHeight, true) == false)
+		{
+			MessageBox(0, "Window initialization failed", "Error", MB_OK);
+			return 0;
+		}
+
+		// Initialize Direct3D
+		if (d3dapp->InitializeDirect3D11(hwnd, hInstance, FullScreenWidth, FullScreenHeight, bFullScreen) == false)
+		{
+			MessageBox(0, "Failed to initialize Direct3D", "Error", MB_OK);
+			return 0;
+		}
+	}
+	else
+	{
+		// If failed to initialize the window
+		if (InitializeWindow(hInstance, nShowCmd, Width, Height, true) == false)
+		{
+			MessageBox(0, "Window initialization failed", "Error", MB_OK);
+			return 0;
+		}
+
+		// Initialize Direct3D
+		if (d3dapp->InitializeDirect3D11(hwnd, hInstance, Width, Height, bFullScreen) == false)
+		{
+			MessageBox(0, "Failed to initialize Direct3D", "Error", MB_OK);
+			return 0;
+		}
+	}
+	
+
+	// Initialize scene
+	if (d3dapp->InitScene() == false)
+	{
+		MessageBox(0, "Failed to initialize the scene", "Error", MB_OK);
 		return 0;
 	}
 
 	messageloop();
+
+	// Cleanup
+	d3dapp->ReleaseObjects();
 
 	return 0;
 }
@@ -134,6 +199,8 @@ int messageloop()
 		else
 		{
 			// Run application
+			d3dapp->UpdateScene();
+			d3dapp->DrawScene();
 		}
 	}
 
