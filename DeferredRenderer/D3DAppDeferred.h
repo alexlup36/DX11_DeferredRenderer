@@ -1,19 +1,27 @@
-#ifndef D3DAPP_H
-#define D3DAPP_H
+#ifndef D3DAPPDEFERRED_H
+#define D3DAPPDEFERRED_H
 
 #include "BaseD3D.h"
 #include "SimpleMath.h"
 
 #include "Camera.h"
 
+#include "DeferredBuffers.h"
+#include "DeferredRenderer.h"
+#include "DeferredRenderToTexture.h"
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-class D3DApp : public BaseD3D
+#define MAXPOINTLIGHTS_WIDTH 2
+#define MAXPOINTLIGHTS_HEIGHT 2
+#define MAXPOINTLIGHTS MAXPOINTLIGHTS_HEIGHT * MAXPOINTLIGHTS_WIDTH
+
+class D3DAppDeferred : public BaseD3D
 {
 public:
-	D3DApp();
-	virtual ~D3DApp();
+	D3DAppDeferred();
+	virtual ~D3DAppDeferred();
 
 	bool InitializeDirect3D11(HWND hwnd,
 		HINSTANCE hInstance,
@@ -41,10 +49,26 @@ public:
 		Vector3 normal;
 	};
 
+	struct VertexDeferred
+	{
+		VertexDeferred(float x, float y, float z, float u, float v)
+			: pos(x, y, z), texCoord(u, v) {}
+
+		Vector3 pos;
+		Vector2 texCoord;
+	};
+
 private:
 
-	void Draw(const Matrix& view, const Matrix& projection, float color[4]);
-	void RenderModels(const Matrix& viewProjection);
+	void RenderToTextureSetup();
+	void UpdateRTTCamera();
+	void RenderToTexture(float color[4]);
+	void RenderToBackBuffer(float color[4]);
+	void EnableZBuffering();
+	void DisableZBuffering();
+
+	ID3D11DepthStencilState* m_pDepthStencilStateEnable;
+	ID3D11DepthStencilState* m_pDepthStencilStateDisable;
 
 	// Object mesh data
 	ID3D11Buffer*			m_pVertexBuffer;
@@ -54,21 +78,20 @@ private:
 	ID3D11Buffer*			m_pGroundVertexBuffer;
 	ID3D11Buffer*			m_pGroundIndexBuffer;
 
+	// Texture quad data
+	ID3D11Buffer*			m_pQuadVertexBuffer;
+	ID3D11Buffer*			m_pQuadIndexBuffer;
+
 	ID3D11VertexShader*		m_pVS;
 	ID3D11PixelShader*		m_pPS;
+	ID3D11PixelShader*		m_pQuadPS;
 	ID3DBlob*				m_pVS_Buffer;
 	ID3DBlob*				m_pPS_Buffer;
-
-	ID3D11InputLayout*		m_pVertexLayout;
+	ID3DBlob*				m_pQuadPS_Buffer;
 
 	// Depth buffer
 	ID3D11DepthStencilView* m_pDepthStencilView;
 	ID3D11Texture2D*		m_pDepthStencilBuffer;
-
-	// Constant buffer per object
-	ID3D11Buffer*			m_cbPerObjectBuffer;
-	// Constant buffer per frame
-	ID3D11Buffer*			m_cbPerFrameBuffer;
 
 	// Render state
 	ID3D11RasterizerState*	m_pWireFrameRenderState;
@@ -78,69 +101,38 @@ private:
 	// Texture
 	ID3D11ShaderResourceView*	m_pCubeTexture;
 	ID3D11ShaderResourceView*	m_pGroundTexture;
-	ID3D11SamplerState*			m_pCubeTexSameplerState;
+
+	// Original render target viewport
+	D3D11_VIEWPORT m_Viewport;
+
+	// ---------------------------------------------------------------------------
+	// Deferred rendering
+
+	DeferredBuffers*			m_pDeferredBuffers;
+	DeferredRenderToTexture*	m_pDeferredRenderToTexture;
+	DeferredRenderer*			m_pDeferredRenderer;
+
+	// ---------------------------------------------------------------------------
 
 	std::unique_ptr<Camera> m_pCamera;
 
 	Matrix m_mWVP;
 
-	Matrix m_mCube1World;
-	Matrix m_mCube2World;
 	Matrix m_mRotation;
 	Matrix m_mGroundWorld;
 	Matrix m_mScale;
 	Matrix m_mTranslation;
 	float m_fRotation = 0.01f;
 
-	struct Light
-	{
-		Light()
-		{
-			ZeroMemory(this, sizeof(Light));
-		}
+	Light m_Light[MAXPOINTLIGHTS];
 
-		Vector3 Direction;
-		float Pad1;
-
-		Vector3 Position;
-		float Range;
-		
-		Vector3 Attenuation;
-		float Pad2;
-		
-		Vector3 Ambient;
-		float Pad3;
-		
-		Vector3 Diffuse;
-		float Pad4;
-		
-		Vector3 Specular;
-		float Pad5;
-		
-		Vector2 SpotlightAngles;
-		Vector2 Pad6;
-	};
-	Light m_Light;
-
-	// Structure which will be sent to the vertex shader
-	// Needs to have the exact same structure as the one in the vertex shader
-	struct cbPerObject
-	{
-		Matrix WVP;
-		Matrix World;
-	};
-	cbPerObject m_cbPerObjectStruct;
-	
-	// Structure which will be sent to the pixel shader
-	// Needs to have the exact same structure as the one in the pixel shader
-	struct cbPerFrame
-	{
-		Light light;
-	};
-	cbPerFrame m_cbPerFrameStruct;
+	// Material property
+	Vector3 m_vSpecularAlbedo = Vector3(1.0f, 1.0f, 1.0f);
+	float m_fSpecularPower = 2.0f;
 
 	UINT m_uiStride = sizeof(Vertex);
+	UINT m_uiStrideDeferredVertex = sizeof(VertexDeferred);
 	UINT m_uiOffset = 0;
 };
 
-#endif // D3DAPP_H
+#endif // D3DAPPDEFERRED_H

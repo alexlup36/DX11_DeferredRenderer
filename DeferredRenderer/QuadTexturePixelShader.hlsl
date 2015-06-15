@@ -8,35 +8,16 @@ struct VS_OUTPUT
 	float4 WorldPos : POSITION;
 };
 
-struct VS_INPUT
-{
-	float4 Position	: POSITION;
-	float2 TexCoord : TEXCOORD;
-	float3 Normal	: NORMAL;
-};
-
 // ----------------------------------------------------------------------------
-
-// Constant buffers
-cbuffer cbPerObject
-{
-	float4x4 WVP;
-	float4x4 World;
-};
+Texture2D ObjTexture;
+SamplerState ObjSamplerState;
 
 // ----------------------------------------------------------------------------
 
 // Main
-VS_OUTPUT main(VS_INPUT input)
+float4 main(VS_OUTPUT input) : SV_TARGET
 {
-	VS_OUTPUT output;
-
-	output.Pos = mul(input.Position, WVP);
-	output.WorldPos = mul(input.Position, World);
-	output.TexCoord = input.TexCoord;
-	output.Normal = mul(float4(input.Normal, 1.0f), World).xyz;
-
-	return output;
+	return ObjTexture.Sample(ObjSamplerState, input.TexCoord);
 }
 
 // ----------------------------------------------------------------------------

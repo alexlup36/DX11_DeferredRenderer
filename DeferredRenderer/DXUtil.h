@@ -1,6 +1,8 @@
 #ifndef DXUTIL_H
 #define DXUTIL_H
 
+#include <d3d11.h>
+
 #include "dxerr.h"
 
 #ifndef HR
@@ -18,6 +20,13 @@
 #endif  // _DEBUG
 #endif // !HR
 
+// ----------------------------------------------------------------------------
 
+HRESULT CompileShader(_In_ LPCWSTR srcFile,
+	_In_ LPCSTR entryPoint,
+	_In_ LPCSTR profile,
+	_Outptr_ ID3DBlob** blob);
+
+// ----------------------------------------------------------------------------
 
 #endif // DXUTIL_H

@@ -2,10 +2,10 @@
 // Structure definition
 struct VS_OUTPUT
 {
-	float4 Pos : SV_POSITION;
-	float2 TexCoord : TEXCOORD;
-	float3 Normal : NORMAL;
-	float4 WorldPos : POSITION;
+	float4 PosCS		: SV_POSITION;
+	float2 TexCoord		: TEXCOORD;
+	float3 NormalWS		: NORMALWS;
+	float3 PosWS		: POSITIONWS;
 };
 
 struct VS_INPUT
@@ -18,9 +18,9 @@ struct VS_INPUT
 // ----------------------------------------------------------------------------
 
 // Constant buffers
-cbuffer cbPerObject
+cbuffer MatrixBuffer
 {
-	float4x4 WVP;
+	float4x4 WorldViewProjection;
 	float4x4 World;
 };
 
@@ -31,10 +31,10 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 
-	output.Pos = mul(input.Position, WVP);
-	output.WorldPos = mul(input.Position, World);
-	output.TexCoord = input.TexCoord;
-	output.Normal = mul(float4(input.Normal, 1.0f), World).xyz;
+	output.PosCS		= mul(input.Position, WorldViewProjection);
+	output.TexCoord		= input.TexCoord;
+	output.PosWS		= mul(input.Position, World).xyz;
+	output.NormalWS		= normalize(mul(input.Normal, (float3x3)World));
 
 	return output;
 }
