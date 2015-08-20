@@ -1,3 +1,5 @@
+#define LIGHTCOUNT 225
+
 // ----------------------------------------------------------------------------
 // Structure definition
 struct PS_INPUT
@@ -36,7 +38,7 @@ SamplerState samplerObj;
 // Constant buffers
 cbuffer cbPerFrame
 {
-	Light light;
+	Light light[LIGHTCOUNT];
 	float3 CameraPosition;
 };
 
@@ -66,52 +68,44 @@ void GetGBufferAttributes(in float2 texCoord,
 
 // ----------------------------------------------------------------------------
 // Auxiliary method for calculating the lighing based on the sampled values
-float3 CalculateLighting(in float3 normal,
+float3 CalculateLighting(int lightIndex, 
+	in float3 normal,
 	in float3 position,
 	in float3 diffuseAlbedo,
 	in float3 specularAlbedo,
 	in float specularPower)
 {
+	Light currentLight = light[lightIndex];
+
 	// Light vector
 	float3 LightVector = 0;
-	float Attenuation = 1.0f;
 
 	// Calculate the light vector
-	LightVector = light.pos - position;
+	LightVector = currentLight.pos - position;
 
 	// Calculate the attenuation based on the distance to the light source
 	float dist = length(LightVector);
-	Attenuation = max(0.0f, 1.0f - (dist / light.range));
-
 	// Normalize light vector
 	LightVector /= dist;
 
-	// Calculate the ambient component
-	float3 ambientComponent = light.ambient * diffuseAlbedo;
+	float d = max(0.0f, dist - currentLight.range);
+	float denom = d / currentLight.range + 1.0f;
+	float Attenuation = 1.0f / (denom * denom);
+	float cutoff = 0.005f;
+	Attenuation = (Attenuation - cutoff) / (1.0f - cutoff);
+	Attenuation = max(0.0f, Attenuation);
 
 	// Calculate the diffuse component
 	float normalDotLight = saturate(dot(normal, LightVector));
-	float3 diffuseComponent = light.diffuse * diffuseAlbedo * normalDotLight;
+	float3 diffuseComponent = currentLight.diffuse * diffuseAlbedo * normalDotLight;
 
 	// Calculate the specular component
 	float3 SurfaceToCamera = CameraPosition - position;
 	float3 HalfVector = normalize(LightVector + SurfaceToCamera);
-	float3 specularComponent = specularAlbedo * light.specular * normalDotLight * pow(saturate(dot(normal, HalfVector)), specularPower);
-
-	/*float3 ViewVector = normalize(CameraPosition - position);
-	float3 ReflectionVector = normalize(reflect(LightVector, normal));
-	float viewDotReflect = dot(ViewVector, ReflectionVector);
-
-	float3 specularComponent = float3(0.0f, 0.0f, 0.0f);
-	if (normalDotLight > 0)
-	{
-		specularComponent = pow(max(viewDotReflect, 0.0f), specularPower) * specularAlbedo * light.specular;
-	}*/
+	float3 specularComponent = specularAlbedo * currentLight.specular * normalDotLight * pow(saturate(dot(normal, HalfVector)), specularPower);
 
 	// Calculate the final color
-	return saturate(ambientComponent + (diffuseComponent + specularComponent) * Attenuation);
-	
-	//return specularComponent;
+	return saturate((diffuseComponent + specularComponent) * Attenuation);
 }
 
 // ----------------------------------------------------------------------------
@@ -124,13 +118,22 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 specularAlbedo;
 	float specularPower;
 
+	float3 lighting = float3(0.0f, 0.0f, 0.0f);
+
 	// Sample the GBuffer properties
 	GetGBufferAttributes(input.TexCoord, normal, position, diffuseAlbedo, specularAlbedo, specularPower);
 
-	// Calculate lighting
-	float3 lighting = CalculateLighting(normal, position, diffuseAlbedo, specularAlbedo, specularPower);
+	for (int iPointLightIndex = 0; iPointLightIndex < LIGHTCOUNT; iPointLightIndex++)
+	{
+		// Calculate lighting
+		lighting += CalculateLighting(iPointLightIndex, normal, position, diffuseAlbedo, specularAlbedo, specularPower);
+	}
 
-	return float4(lighting, 1.0f);
+	// Add ambient component
+	lighting += light[0].ambient * diffuseAlbedo * 0.3f;
+
+	// Final color
+	return saturate(float4(lighting, 1.0f));
 }
 
 // ----------------------------------------------------------------------------

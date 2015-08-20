@@ -9,6 +9,10 @@
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
+#define MAXPOINTLIGHTS_WIDTH 15
+#define MAXPOINTLIGHTS_HEIGHT 15
+#define MAXPOINTLIGHTS MAXPOINTLIGHTS_HEIGHT * MAXPOINTLIGHTS_WIDTH
+
 // ----------------------------------------------------------------------------
 
 struct Light
@@ -92,7 +96,7 @@ private:
 
 	struct LightBuffer
 	{
-		Light light;
+		Light light[MAXPOINTLIGHTS];
 		Vector3 CameraPosition;
 		float Pad;
 	};

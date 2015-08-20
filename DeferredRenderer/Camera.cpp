@@ -69,7 +69,7 @@ void Camera::UpdateCamera()
 	// Rotate the right, up and forward vector of the camera using the Y rot matrix
 	m_vCameraUp = Vector4::Transform(m_vCameraUp, matYRotationMatrix);
 	m_vCameraRight = Vector4::Transform(m_vDefaultRight, matYRotationMatrix);
-	m_vCameraForward = Vector4::Transform(m_vDefaultForward, matYRotationMatrix);
+	m_vCameraForward = Vector4::Transform(m_vDefaultForward, matYRotationMatrix * Matrix::CreateRotationX(m_fCameraPitch));
 
 	// Update camera position
 	m_vCameraPosition += m_fMoveLeftRight * m_vCameraRight;

@@ -2,6 +2,23 @@
 
 #include <d3dcompiler.h>
 
+// ----------------------------------------------------------------------------
+
+// Generate a random float number between 0 and maxFloat
+float Random(float maxFloat)
+{
+	return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / maxFloat));
+}
+
+// ----------------------------------------------------------------------------
+
+float Random(float minFloat, float maxFloat)
+{
+	return minFloat + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (maxFloat - minFloat)));
+}
+
+// ----------------------------------------------------------------------------
+
 HRESULT CompileShader(_In_ LPCWSTR srcFile, _In_ LPCSTR entryPoint, _In_ LPCSTR profile, _Outptr_ ID3DBlob** blob)
 {
 	if (!srcFile || !entryPoint || !profile || !blob)
@@ -43,3 +60,5 @@ HRESULT CompileShader(_In_ LPCWSTR srcFile, _In_ LPCSTR entryPoint, _In_ LPCSTR 
 
 	return hr;	
 }
+
+// ----------------------------------------------------------------------------

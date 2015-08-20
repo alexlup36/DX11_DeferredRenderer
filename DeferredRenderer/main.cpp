@@ -21,11 +21,11 @@
 // Global variables -----------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-LPCTSTR WndClassName = "Win32Window";
+LPCTSTR WndClassName = L"Win32Window";
 HWND hwnd = NULL;
 
-const int Width = 1366;
-const int Height = 768;
+const int Width = 1280;
+const int Height = 720;
 
 const int FullScreenWidth = 1920;
 const int FullScreenHeight = 1080;
@@ -82,7 +82,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		// If failed to initialize the window
 		if (InitializeWindow(hInstance, nShowCmd, FullScreenWidth, FullScreenHeight, true) == false)
 		{
-			MessageBox(0, "Window initialization failed", "Error", MB_OK);
+			MessageBox(0, L"Window initialization failed", L"Error", MB_OK);
 			return 0;
 		}
 
@@ -91,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			// Initialize Direct3D deferred version
 			if (d3dappDeferred->InitializeDirect3D11(hwnd, hInstance, FullScreenWidth, FullScreenHeight, bFullScreen) == false)
 			{
-				MessageBox(0, "Failed to initialize Direct3D", "Error", MB_OK);
+				MessageBox(0, L"Failed to initialize Direct3D", L"Error", MB_OK);
 				return 0;
 			}
 		}
@@ -100,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			// Initialize Direct3D
 			if (d3dapp->InitializeDirect3D11(hwnd, hInstance, FullScreenWidth, FullScreenHeight, bFullScreen) == false)
 			{
-				MessageBox(0, "Failed to initialize Direct3D", "Error", MB_OK);
+				MessageBox(0, L"Failed to initialize Direct3D", L"Error", MB_OK);
 				return 0;
 			}
 		}
@@ -110,7 +110,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		// If failed to initialize the window
 		if (InitializeWindow(hInstance, nShowCmd, Width, Height, true) == false)
 		{
-			MessageBox(0, "Window initialization failed", "Error", MB_OK);
+			MessageBox(0, L"Window initialization failed", L"Error", MB_OK);
 			return 0;
 		}
 
@@ -119,7 +119,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			// Initialize Direct3D deferred version
 			if (d3dappDeferred->InitializeDirect3D11(hwnd, hInstance, Width, Height, bFullScreen) == false)
 			{
-				MessageBox(0, "Failed to initialize Direct3D", "Error", MB_OK);
+				MessageBox(0, L"Failed to initialize Direct3D", L"Error", MB_OK);
 				return 0;
 			}
 		}
@@ -128,7 +128,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			// Initialize Direct3D
 			if (d3dapp->InitializeDirect3D11(hwnd, hInstance, Width, Height, bFullScreen) == false)
 			{
-				MessageBox(0, "Failed to initialize Direct3D", "Error", MB_OK);
+				MessageBox(0, L"Failed to initialize Direct3D", L"Error", MB_OK);
 				return 0;
 			}
 		}
@@ -141,14 +141,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		// Init scene for deferred rendering
 		if (d3dappDeferred->InitScene() == false)
 		{
-			MessageBox(0, "Failed to initialize the scene", "Error", MB_OK);
+			MessageBox(0, L"Failed to initialize the scene", L"Error", MB_OK);
 			return 0;
 		}
 
 		// Initialize DirectInput
 		if (Input::GetInstance().InitializeDirectInput(hwnd, hInstance, d3dappDeferred->GetActiveCamera()) == false)
 		{
-			MessageBox(0, "Failed to initialize the DirectInput", "Error", MB_OK);
+			MessageBox(0, L"Failed to initialize the DirectInput", L"Error", MB_OK);
 			return 0;
 		}
 	}
@@ -157,14 +157,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		// Init scene for forward rendering
 		if (d3dapp->InitScene() == false)
 		{
-			MessageBox(0, "Failed to initialize the scene", "Error", MB_OK);
+			MessageBox(0, L"Failed to initialize the scene", L"Error", MB_OK);
 			return 0;
 		}
 
 		// Initialize DirectInput
 		if (Input::GetInstance().InitializeDirectInput(hwnd, hInstance, d3dapp->GetActiveCamera()) == false)
 		{
-			MessageBox(0, "Failed to initialize the DirectInput", "Error", MB_OK);
+			MessageBox(0, L"Failed to initialize the DirectInput", L"Error", MB_OK);
 			return 0;
 		}
 	}
@@ -211,7 +211,7 @@ bool InitializeWindow(HINSTANCE hInstance,
 	// Register class
 	if (!RegisterClassEx(&wc))
 	{
-		MessageBox(NULL, "Error registering class", "Error", MB_OK | MB_ICONERROR);
+		MessageBox(NULL, L"Error registering class", L"Error", MB_OK | MB_ICONERROR);
 		return 1;
 	}
 
@@ -220,7 +220,7 @@ bool InitializeWindow(HINSTANCE hInstance,
 	// Create window
 	hwnd = CreateWindowEx(NULL,
 		WndClassName, /* use the previously registered class name */
-		"DirectX11",
+		L"DirectX11",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, /* start x start y*/
 		width, height,
@@ -234,7 +234,7 @@ bool InitializeWindow(HINSTANCE hInstance,
 	// Failed to create window?
 	if (hwnd == false)
 	{
-		MessageBox(NULL, "Failed to create window", "Error", MB_OK | MB_ICONERROR);
+		MessageBox(NULL, L"Failed to create window", L"Error", MB_OK | MB_ICONERROR);
 		return 1;
 	}
 
@@ -314,8 +314,8 @@ LRESULT CALLBACK WndProc(HWND hwnd,
 			{
 				if (bFullScreen == false)
 				{
-					if (MessageBox(0, "Are you sure you want to quit?",
-						"Really?",
+					if (MessageBox(0, L"Are you sure you want to quit?",
+						L"Really?",
 						MB_YESNO | MB_ICONQUESTION) == IDYES)
 					{
 						DestroyWindow(hwnd);

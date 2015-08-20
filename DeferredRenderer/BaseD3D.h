@@ -31,7 +31,7 @@ protected:
 	ID3D11DeviceContext*	m_pD3D11DeviceContext;
 	ID3D11RenderTargetView* m_pRenderTargetView;
 	HWND					m_HWND;
-	bool					m_bEnable4xMsaa = false;
+	bool					m_bEnable4xMsaa = true;
 	// Screen depth
 	float m_fScreenDepth;
 	float m_fScreenNear;

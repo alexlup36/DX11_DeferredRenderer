@@ -48,7 +48,7 @@ bool BaseD3D::InitializeDirect3D11(HWND hwnd, HINSTANCE hInstance, unsigned int 
 
 	if (featureLevel != D3D_FEATURE_LEVEL_11_0)
 	{
-		MessageBox(0, "Direct3D 11 not supported", "Error", MB_OK);
+		MessageBox(0, L"Direct3D 11 not supported", L"Error", MB_OK);
 		return false;
 	}
 

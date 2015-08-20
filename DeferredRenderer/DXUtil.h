@@ -22,6 +22,11 @@
 
 // ----------------------------------------------------------------------------
 
+float Random(float maxFloat);
+float Random(float minFloat, float maxFloat);
+
+// ----------------------------------------------------------------------------
+
 HRESULT CompileShader(_In_ LPCWSTR srcFile,
 	_In_ LPCSTR entryPoint,
 	_In_ LPCSTR profile,

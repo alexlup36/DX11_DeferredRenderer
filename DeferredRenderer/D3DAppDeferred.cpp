@@ -3,6 +3,7 @@
 #include <d3dcompiler.h>
 #include <string>
 #include "WICTextureLoader.h"
+#include "Mesh.h"
 
 D3DAppDeferred::D3DAppDeferred()
 {
@@ -355,17 +356,18 @@ bool D3DAppDeferred::InitScene()
 	for (int iPointLightIndex = 0; iPointLightIndex < MAXPOINTLIGHTS; iPointLightIndex++)
 	{
 		// Directional light
-		m_Light[iPointLightIndex].Direction = Vector3(0.0f, 1.0f, 0.0f);
-		m_Light[iPointLightIndex].Ambient = Vector3(0.2f, 0.2f, 0.2f);
-		m_Light[iPointLightIndex].Diffuse = Vector3(1.0f, 1.0f, 1.0f);
+		//m_Light[iPointLightIndex].Direction = Vector3(0.0f, 1.0f, 0.0f);
+		//m_Light[iPointLightIndex].Ambient = Vector3(0.0f, 0.0f, 0.0f);
+		//m_Light[iPointLightIndex].Diffuse = Vector3(1.0f, 1.0f, 1.0f);
 
 		// Point light
-		m_Light[iPointLightIndex].Position = Vector3(0.0f, 0.0f, 0.0f);
-		m_Light[iPointLightIndex].Range = 100.0f;
-		m_Light[iPointLightIndex].Attenuation = Vector3(0.0f, 0.2f, 0.0f);
-		m_Light[iPointLightIndex].Ambient = Vector3(0.3f, 0.3f, 0.3f);
-		m_Light[iPointLightIndex].Diffuse = Vector3(1.0f, 1.0f, 1.0f);
-		m_Light[iPointLightIndex].Specular = Vector3(1.0f, 1.0f, 1.0f);
+		m_Light[iPointLightIndex].Position		= Vector3(0.0f, 0.0f, 0.0f);
+		m_Light[iPointLightIndex].Range = Random(1.0f, 3.0f);
+		m_Light[iPointLightIndex].Attenuation = Vector3(Random(1.0f), Random(1.0f), Random(1.0f));
+
+		m_Light[iPointLightIndex].Ambient = Vector3(Random(1.0f), Random(1.0f), Random(1.0f));
+		m_Light[iPointLightIndex].Diffuse = Vector3(Random(1.0f), Random(1.0f), Random(1.0f));
+		m_Light[iPointLightIndex].Specular = Vector3(Random(1.0f), Random(1.0f), Random(1.0f));
 	}
 
 	// ---------------------------------------------------------------------------
@@ -446,6 +448,13 @@ bool D3DAppDeferred::InitScene()
 	// Set the depth stencil state
 	EnableZBuffering();
 
+	// ---------------------------------------------------------------------------
+	// Load models
+	//Mesh* testMesh = new Mesh();
+	//testMesh->LoadOBJ("cube.obj", false);
+
+	// ---------------------------------------------------------------------------
+
 	return true;
 }
 
@@ -459,7 +468,7 @@ void D3DAppDeferred::UpdateScene(double dt)
 	// ---------------------------------------------------------------------------
 
 	// Rotate the cubes
-	m_fRotation += (float)(1.0f * dt);
+	m_fRotation += (float)(2.0f * dt);
 	if (m_fRotation > DirectX::XM_2PI)
 	{
 		m_fRotation = 0.0f;
@@ -632,18 +641,20 @@ void D3DAppDeferred::RenderToTexture(float color[4])
 		for (int iPointLightWidth = 0; iPointLightWidth < MAXPOINTLIGHTS_WIDTH; iPointLightWidth++)
 		{
 			Matrix cubeWorld = Matrix();
+			Matrix pointLightWorld = Matrix();
 
 			m_mRotation = Matrix::CreateRotationY(m_fRotation);
 			m_mTranslation = Matrix::CreateTranslation(iPointLightWidth * 10.0f, 0.0f, iPointLightHeight * 10.0f);
 
 			cubeWorld = m_mRotation * m_mTranslation;
+			pointLightWorld = Matrix::CreateTranslation(5.0f, 0.0f, 0.0f) * m_mRotation * m_mTranslation;
 			m_mWVP = cubeWorld * m_pCamera->View() * m_pCamera->PerpectiveProjection();
 
 			m_pDeferredRenderToTexture->UpdateScene(m_mWVP, cubeWorld, m_pCubeTexture, m_vSpecularAlbedo, m_fSpecularPower);
 
 			// Update the position of the point light to the position of the cube
 			Vector4 pointLightPosition = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-			pointLightPosition = Vector4::Transform(pointLightPosition, cubeWorld);
+			pointLightPosition = Vector4::Transform(pointLightPosition, pointLightWorld);
 
 			int iLightIndex = iPointLightHeight * MAXPOINTLIGHTS_WIDTH + iPointLightWidth;
 			m_Light[iLightIndex].Position.x = pointLightPosition.x;

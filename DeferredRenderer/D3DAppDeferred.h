@@ -13,10 +13,6 @@
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-#define MAXPOINTLIGHTS_WIDTH 2
-#define MAXPOINTLIGHTS_HEIGHT 2
-#define MAXPOINTLIGHTS MAXPOINTLIGHTS_HEIGHT * MAXPOINTLIGHTS_WIDTH
-
 class D3DAppDeferred : public BaseD3D
 {
 public:

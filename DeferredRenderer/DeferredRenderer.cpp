@@ -126,16 +126,16 @@ void DeferredRenderer::DrawScene(ID3D11DeviceContext* pDeviceContext,
 	SetShaderParameters(pDeviceContext);
 
 
-	for (int iPointLightIndex = 0; iPointLightIndex < 4; iPointLightIndex++)
+	for (int iPointLightIndex = 0; iPointLightIndex < MAXPOINTLIGHTS; iPointLightIndex++)
 	{
-		m_LightBuffer.light = pointLightList[iPointLightIndex];
-
-		pDeviceContext->UpdateSubresource(m_pLightBuffer, 0, NULL, &m_LightBuffer, 0, 0);
-		pDeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
-
-		// Render
-		pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
+		m_LightBuffer.light[iPointLightIndex] = pointLightList[iPointLightIndex];
 	}
+
+	pDeviceContext->UpdateSubresource(m_pLightBuffer, 0, NULL, &m_LightBuffer, 0, 0);
+	pDeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
+
+	// Render
+	pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
 
 	// Reset the references to shader resource views
 	ID3D11ShaderResourceView* shaderResView = NULL;
