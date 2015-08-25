@@ -30,6 +30,7 @@ public:
 	inline const Matrix& OrthographicProjection() { return m_mOrthographicProjection; }
 
 	inline Vector4 Position() { return m_vCameraPosition; }
+	inline void SetPosition(const Vector4& newPosition) { m_vCameraPosition = newPosition; }
 
 	inline float GetCameraSpeed() { return m_fCameraSpeed; }
 

@@ -9,8 +9,8 @@
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-#define MAXPOINTLIGHTS_WIDTH 15
-#define MAXPOINTLIGHTS_HEIGHT 15
+#define MAXPOINTLIGHTS_WIDTH 24
+#define MAXPOINTLIGHTS_HEIGHT 24
 #define MAXPOINTLIGHTS MAXPOINTLIGHTS_HEIGHT * MAXPOINTLIGHTS_WIDTH
 
 // ----------------------------------------------------------------------------

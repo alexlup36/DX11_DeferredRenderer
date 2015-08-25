@@ -162,6 +162,7 @@ bool D3DAppDeferred::InitScene()
 		m_fScreenDepth,
 		m_iClientWidth,
 		m_iClientHeight);
+	m_pCamera->SetPosition(Vector4(0.0f, 50.0f, 0.0f, 1.0f));
 
 	// ---------------------------------------------------------------------------
 	// Cubes
@@ -362,7 +363,7 @@ bool D3DAppDeferred::InitScene()
 
 		// Point light
 		m_Light[iPointLightIndex].Position		= Vector3(0.0f, 0.0f, 0.0f);
-		m_Light[iPointLightIndex].Range = Random(1.0f, 3.0f);
+		m_Light[iPointLightIndex].Range = Random(3.0f, 5.0f);
 		m_Light[iPointLightIndex].Attenuation = Vector3(Random(1.0f), Random(1.0f), Random(1.0f));
 
 		m_Light[iPointLightIndex].Ambient = Vector3(Random(1.0f), Random(1.0f), Random(1.0f));
@@ -602,7 +603,7 @@ void D3DAppDeferred::RenderToBackBuffer(float color[4])
 	// Cube 1
 	Matrix world = Matrix::Identity;
 	Matrix view = Matrix::Identity;
-	Matrix wvp = world * view;//*m_pCamera->OrthographicProjection();
+	Matrix wvp = world * view;//m_pCamera->OrthographicProjection();
 
 	m_pDeferredRenderer->UpdateScene(wvp,
 		m_pDeferredBuffers->GetShaderResourceView(BUFFERTYPE::keNormal),
