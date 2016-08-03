@@ -1,4 +1,4 @@
-#define LIGHTCOUNT 576
+#define LIGHTCOUNT 144
 
 // ----------------------------------------------------------------------------
 // Structure definition

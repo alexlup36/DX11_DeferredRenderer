@@ -151,8 +151,8 @@ bool D3DAppDeferred::InitScene()
 {
 	// ---------------------------------------------------------------------------
 
-	m_fScreenDepth = 500.0f;
-	m_fScreenNear = 1.0f;
+	m_fScreenDepth = 5000.0f;
+	m_fScreenNear = 0.001f;
 
 	// ---------------------------------------------------------------------------
 
@@ -603,7 +603,7 @@ void D3DAppDeferred::RenderToBackBuffer(float color[4])
 	// Cube 1
 	Matrix world = Matrix::Identity;
 	Matrix view = Matrix::Identity;
-	Matrix wvp = world * view;//m_pCamera->OrthographicProjection();
+	Matrix wvp = /*m_pCamera->PerpectiveProjection() * */view * world;
 
 	m_pDeferredRenderer->UpdateScene(wvp,
 		m_pDeferredBuffers->GetShaderResourceView(BUFFERTYPE::keNormal),

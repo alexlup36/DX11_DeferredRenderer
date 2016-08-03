@@ -16,7 +16,7 @@ Camera::Camera(float fNearPlaneWidth,
 	// Create the view matrix
 	m_mView = XMMatrixLookAtLH(m_vCameraPosition, m_vCameraTarget, m_vCameraUp);
 	// Create the projection matrix
-	m_mPerspectiveProjection = XMMatrixPerspectiveLH(fNearPlaneWidth * DirectX::XM_PI,
+	m_mPerspectiveProjection = XMMatrixPerspectiveFovLH(DirectX::XM_PI * 0.25f,
 		(float)clientWidth / clientHeight,
 		screenNear,
 		screenDepth);
@@ -41,8 +41,8 @@ void Camera::UpdateProjection(float fNearPlaneWidth,
 	int clientWidth,
 	int clientHeight)
 {
-	// Create the projection matrix
-	m_mPerspectiveProjection = XMMatrixPerspectiveLH(fNearPlaneWidth * DirectX::XM_PI,
+	// Create the perspective projection matrix
+	m_mPerspectiveProjection = XMMatrixPerspectiveLH(DirectX::XM_PI,
 		(float)clientWidth / clientHeight,
 		screenNear,
 		screenDepth);

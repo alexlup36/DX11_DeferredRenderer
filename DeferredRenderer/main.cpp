@@ -24,8 +24,8 @@
 LPCTSTR WndClassName = L"Win32Window";
 HWND hwnd = NULL;
 
-const int Width = 1280;
-const int Height = 720;
+const int Width = 1600;
+const int Height = 900;
 
 const int FullScreenWidth = 1920;
 const int FullScreenHeight = 1080;
@@ -344,13 +344,13 @@ void AddConsole()
 	AllocConsole();
 
 	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-	int hCrt = _open_osfhandle((long)handle_out, _O_TEXT);
+	int hCrt = _open_osfhandle((__int64)handle_out, _O_TEXT);
 	FILE* hf_out = _fdopen(hCrt, "w");
 	setvbuf(hf_out, NULL, _IONBF, 1);
 	*stdout = *hf_out;
 
 	HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
-	hCrt = _open_osfhandle((long)handle_in, _O_TEXT);
+	hCrt = _open_osfhandle((__int64)handle_in, _O_TEXT);
 	FILE* hf_in = _fdopen(hCrt, "r");
 	setvbuf(hf_in, NULL, _IONBF, 128);
 	*stdin = *hf_in;

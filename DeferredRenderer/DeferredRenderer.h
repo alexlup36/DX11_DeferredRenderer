@@ -3,14 +3,14 @@
 
 // ----------------------------------------------------------------------------
 
-#include "SimpleMath.h"
 #include "DXUtil.h"
+#include "SimpleMath.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-#define MAXPOINTLIGHTS_WIDTH 24
-#define MAXPOINTLIGHTS_HEIGHT 24
+#define MAXPOINTLIGHTS_WIDTH 12
+#define MAXPOINTLIGHTS_HEIGHT 12
 #define MAXPOINTLIGHTS MAXPOINTLIGHTS_HEIGHT * MAXPOINTLIGHTS_WIDTH
 
 // ----------------------------------------------------------------------------
